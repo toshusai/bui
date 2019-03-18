@@ -15,12 +15,16 @@ func init() {
 // Window !
 type Window struct {
 	window *glfw.Window
+	Width  int
+	Height int
 	Update func()
 }
 
 // Run window loop
 func (w *Window) Run() {
 	defer glfw.Terminate()
+	gl.Enable(gl.BLEND)
+	gl.BlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
 	for !w.window.ShouldClose() {
 		w.Update()
 
@@ -39,7 +43,6 @@ func NewWindow(width, height int, title string) *Window {
 	if err := glfw.Init(); err != nil {
 		log.Fatalln("failed to initialize glfw:", err)
 	}
-
 	glfw.WindowHint(glfw.Resizable, glfw.False)
 	glfw.WindowHint(glfw.ContextVersionMajor, 4)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
@@ -58,6 +61,8 @@ func NewWindow(width, height int, title string) *Window {
 	window := &Window{
 		window: glfwWindow,
 		Update: func() {},
+		Width:  width,
+		Height: height,
 	}
 	return window
 }

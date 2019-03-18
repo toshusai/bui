@@ -1,21 +1,30 @@
 package main
 
 import (
-	"fmt"
-	"time"
+	"log"
+
+	_ "image/png"
 
 	"github.com/toshusai/bui/view"
 )
 
 func main() {
 	w := view.NewWindow(800, 600, "Test")
-	t := time.Now()
+
+	scene := view.NewScene()
+	scene.Camera = view.NewCamera()
+
+	tex, err := view.NewTexture("test_image_32px.png")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	sp := view.NewSprite(tex)
+
+	scene.Add(sp)
+
 	w.Update = func() {
-		timer := time.Now().Sub(t)
-		fmt.Println(timer)
-		if timer.Seconds() > 3 {
-			w.Close()
-		}
+		scene.Draw()
 	}
 	w.Run()
 }
