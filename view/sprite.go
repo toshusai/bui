@@ -14,7 +14,7 @@ type Sprite struct {
 	Position    mgl32.Vec3
 	rotation    mgl32.Vec3
 	Scale       mgl32.Vec3
-	scene       *Scene
+	parent      *Object
 	rotationMat mgl32.Mat4
 }
 
@@ -56,12 +56,17 @@ func NewSprite(tex *Texture) *Sprite {
 	return sp
 }
 
-func (sp *Sprite) draw() {
+func (sp *Sprite) SetParent(obj *Object) {
+	sp.parent = obj
+}
+
+func (sp *Sprite) Update() {
 	gl.UseProgram(sp.program)
 	projectionUniform := gl.GetUniformLocation(sp.program, gl.Str("projection\x00"))
 	viewUniform := gl.GetUniformLocation(sp.program, gl.Str("view\x00"))
-	gl.UniformMatrix4fv(projectionUniform, 1, false, &sp.scene.Camera.projection[0])
-	gl.UniformMatrix4fv(viewUniform, 1, false, &sp.scene.Camera.view[0])
+
+	gl.UniformMatrix4fv(projectionUniform, 1, false, &sp.parent.scene.Camera.projection[0])
+	gl.UniformMatrix4fv(viewUniform, 1, false, &sp.parent.scene.Camera.view[0])
 
 	translate := mgl32.Translate3D(
 		sp.Position.X(),
@@ -75,9 +80,9 @@ func (sp *Sprite) draw() {
 
 	sp.rotationMat = mgl32.LookAt(
 		0, 0, 0,
-		-sp.scene.Camera.position.X(),
-		-sp.scene.Camera.position.Y(),
-		-sp.scene.Camera.position.Z(),
+		-sp.parent.scene.Camera.position.X(),
+		-sp.parent.scene.Camera.position.Y(),
+		-sp.parent.scene.Camera.position.Z(),
 		0, 1, 0)
 	sp.rotationMat = sp.rotationMat.Inv()
 

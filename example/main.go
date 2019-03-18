@@ -21,7 +21,11 @@ func main() {
 
 	sp := view.NewSprite(tex)
 
-	scene.Add(sp)
+	obj := view.NewObject()
+
+	obj.AddComponent(sp)
+
+	scene.Add(&obj)
 
 	w.Update = func() {
 		scene.Draw()

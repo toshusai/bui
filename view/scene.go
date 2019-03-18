@@ -7,7 +7,7 @@ import (
 // Scene !
 type Scene struct {
 	Camera  *Camera
-	sprites []*Sprite
+	objects []*Object
 }
 
 // NewScene create a new scene
@@ -24,15 +24,17 @@ func NewScene() *Scene {
 }
 
 // Add sprite to scene
-func (scene *Scene) Add(sp *Sprite) {
-	scene.sprites = append(scene.sprites, sp)
-	sp.scene = scene
+func (scene *Scene) Add(obj *Object) {
+	obj.scene = scene
+	scene.objects = append(scene.objects, obj)
 }
 
-// Draw all sprites
+// Draw all objects
 func (scene *Scene) Draw() {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-	for _, sp := range scene.sprites {
-		sp.draw()
+	for _, obj := range scene.objects {
+		for _, comp := range obj.components {
+			comp.Update()
+		}
 	}
 }
