@@ -18,24 +18,7 @@ type Window struct {
 	Width  int
 	Height int
 	Update func()
-}
-
-// Run window loop
-func (w *Window) Run() {
-	defer glfw.Terminate()
-	gl.Enable(gl.BLEND)
-	gl.BlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
-	for !w.window.ShouldClose() {
-		w.Update()
-
-		w.window.SwapBuffers()
-		glfw.PollEvents()
-	}
-}
-
-// Close window
-func (w *Window) Close() {
-	w.window.SetShouldClose(true)
+	Scene  *Scene
 }
 
 // NewWindow create a new window
@@ -65,4 +48,28 @@ func NewWindow(width, height int, title string) *Window {
 		Height: height,
 	}
 	return window
+}
+
+// AddScene add scene
+func (w *Window) AddScene(scene *Scene) {
+	w.Scene = scene
+	scene.Window = w
+}
+
+// Run window loop
+func (w *Window) Run() {
+	defer glfw.Terminate()
+	gl.Enable(gl.BLEND)
+	gl.BlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
+	for !w.window.ShouldClose() {
+		w.Update()
+
+		w.window.SwapBuffers()
+		glfw.PollEvents()
+	}
+}
+
+// Close window
+func (w *Window) Close() {
+	w.window.SetShouldClose(true)
 }

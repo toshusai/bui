@@ -7,15 +7,12 @@ import (
 
 // Sprite is 2D image
 type Sprite struct {
-	Texture     *Texture
-	vertices    []float32
-	vao         uint32
-	program     uint32
-	Position    mgl32.Vec3
-	rotation    mgl32.Vec3
-	Scale       mgl32.Vec3
-	parent      *Object
-	rotationMat mgl32.Mat4
+	Texture  *Texture
+	vertices []float32
+	vao      uint32
+	program  uint32
+	Scale    mgl32.Vec3
+	parent   *Object
 }
 
 var program uint32
@@ -34,9 +31,6 @@ func NewSprite(tex *Texture) *Sprite {
 		float32(sp.Texture.width), 0, 0.0, 1.0, 0,
 	}
 
-	sp.Position = mgl32.Vec3{}
-	sp.rotation = mgl32.Vec3{}
-	sp.Scale = mgl32.Vec3{1, 1, 1}
 	gl.GenVertexArrays(1, &sp.vao)
 	gl.BindVertexArray(sp.vao)
 	sp.program = program
@@ -69,26 +63,26 @@ func (sp *Sprite) Update() {
 	gl.UniformMatrix4fv(viewUniform, 1, false, &sp.parent.scene.Camera.view[0])
 
 	translate := mgl32.Translate3D(
-		sp.Position.X(),
-		sp.Position.Y(),
-		sp.Position.Z())
+		sp.parent.Position.X(),
+		sp.parent.Position.Y(),
+		sp.parent.Position.Z())
 
 	scale := mgl32.Scale3D(
-		sp.Scale.X(),
-		sp.Scale.Y(),
-		sp.Scale.Z())
+		sp.parent.Scale.X(),
+		sp.parent.Scale.Y(),
+		sp.parent.Scale.Z())
 
-	sp.rotationMat = mgl32.LookAt(
+	sp.parent.Rotation = mgl32.LookAt(
 		0, 0, 0,
-		-sp.parent.scene.Camera.position.X(),
-		-sp.parent.scene.Camera.position.Y(),
-		-sp.parent.scene.Camera.position.Z(),
+		-sp.parent.scene.Camera.parent.Position.X(),
+		-sp.parent.scene.Camera.parent.Position.Y(),
+		-sp.parent.scene.Camera.parent.Position.Z(),
 		0, 1, 0)
-	sp.rotationMat = sp.rotationMat.Inv()
+	sp.parent.Rotation = sp.parent.Rotation.Inv()
 
-	model := scale.Mul4(sp.rotationMat).Mul4(translate)
+	model := scale.Mul4(sp.parent.Rotation).Mul4(translate)
 	model = translate.Mul4(scale)
-	model = sp.rotationMat.Mul4(model)
+	model = sp.parent.Rotation.Mul4(model)
 
 	modelUniform := gl.GetUniformLocation(sp.program, gl.Str("model\x00"))
 	gl.UniformMatrix4fv(modelUniform, 1, false, &model[0])

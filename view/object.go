@@ -1,12 +1,23 @@
 package view
 
+import (
+	"github.com/go-gl/mathgl/mgl32"
+)
+
 type Object struct {
+	Position   mgl32.Vec3
+	Rotation   mgl32.Mat4
+	Scale      mgl32.Vec3
 	components []component
 	scene      *Scene
 }
 
-func NewObject() Object {
-	return Object{}
+func NewObject() *Object {
+	return &Object{
+		Position: mgl32.Vec3{},
+		Rotation: mgl32.Ident4(),
+		Scale:    mgl32.Vec3{1, 1, 1},
+	}
 }
 
 func (obj *Object) AddComponent(comp component) {

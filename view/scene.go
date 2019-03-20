@@ -8,6 +8,7 @@ import (
 type Scene struct {
 	Camera  *Camera
 	objects []*Object
+	Window  *Window
 }
 
 // NewScene create a new scene
