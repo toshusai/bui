@@ -72,16 +72,15 @@ func (sp *Sprite) Update() {
 		sp.parent.Scale.Y(),
 		sp.parent.Scale.Z())
 
-	sp.parent.Rotation = mgl32.LookAt(
-		0, 0, 0,
-		-sp.parent.scene.Camera.parent.Position.X(),
-		-sp.parent.scene.Camera.parent.Position.Y(),
-		-sp.parent.scene.Camera.parent.Position.Z(),
-		0, 1, 0)
-	sp.parent.Rotation = sp.parent.Rotation.Inv()
+	// sp.parent.Rotation = mgl32.LookAt(
+	// 	0, 0, 0,
+	// 	-sp.parent.scene.Camera.parent.Position.X(),
+	// 	-sp.parent.scene.Camera.parent.Position.Y(),
+	// 	-sp.parent.scene.Camera.parent.Position.Z(),
+	// 	0, 1, 0)
+	// sp.parent.Rotation = sp.parent.Rotation.Inv()
 
-	model := scale.Mul4(sp.parent.Rotation).Mul4(translate)
-	model = translate.Mul4(scale)
+	model := translate.Mul4(scale)
 	model = sp.parent.Rotation.Mul4(model)
 
 	modelUniform := gl.GetUniformLocation(sp.program, gl.Str("model\x00"))

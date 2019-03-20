@@ -22,6 +22,7 @@ func main() {
 
 	sp := view.NewSprite(tex)
 	obj := view.NewObject()
+	obj.Position = mgl32.Vec3{50, 0, 0}
 	obj.AddComponent(sp)
 	scene.Add(obj)
 
