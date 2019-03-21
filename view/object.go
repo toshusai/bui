@@ -10,6 +10,8 @@ type Object struct {
 	Scale      mgl32.Vec3
 	components []component
 	scene      *Scene
+	Parent     *Object
+	Children   []*Object
 }
 
 func NewObject() *Object {

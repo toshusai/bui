@@ -55,12 +55,6 @@ func (sp *Sprite) SetParent(obj *Object) {
 }
 
 func (sp *Sprite) Update() {
-	gl.UseProgram(sp.program)
-	projectionUniform := gl.GetUniformLocation(sp.program, gl.Str("projection\x00"))
-	viewUniform := gl.GetUniformLocation(sp.program, gl.Str("view\x00"))
-
-	gl.UniformMatrix4fv(projectionUniform, 1, false, &sp.parent.scene.Camera.projection[0])
-	gl.UniformMatrix4fv(viewUniform, 1, false, &sp.parent.scene.Camera.view[0])
 
 	translate := mgl32.Translate3D(
 		sp.parent.Position.X(),

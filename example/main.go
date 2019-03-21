@@ -22,9 +22,14 @@ func main() {
 
 	sp := view.NewSprite(tex)
 	obj := view.NewObject()
-	obj.Position = mgl32.Vec3{50, 0, 0}
+	obj.Position = mgl32.Vec3{0, 0, 0}
 	obj.AddComponent(sp)
-	scene.Add(obj)
+
+	can := view.NewCanvas(w)
+	canObj := view.NewObject()
+	canObj.Children = []*view.Object{obj}
+	canObj.AddComponent(can)
+	scene.Add(canObj)
 
 	cam := view.NewCamera()
 	camObj := view.NewObject()
