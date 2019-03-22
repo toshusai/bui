@@ -56,7 +56,6 @@ func InitShader() {
 	spriteShader.uniforms["model"] = gl.GetUniformLocation(spriteShader.program, gl.Str("model\x00"))
 	spriteShader.uniforms["vert"] = gl.GetAttribLocation(spriteShader.program, gl.Str("vert\x00"))
 	spriteShader.uniforms["vertTexCoord"] = gl.GetAttribLocation(spriteShader.program, gl.Str("vertTexCoord\x00"))
-	fmt.Println(spriteShader)
 }
 
 func (s *Shader) GetUnitform(str string) int32 {

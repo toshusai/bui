@@ -10,7 +10,6 @@ type Sprite struct {
 	Texture  *Texture
 	vertices []float32
 	vao      uint32
-	Scale    mgl32.Vec3
 	parent   *Object
 	shader   *Shader
 }
@@ -75,8 +74,7 @@ func (sp *Sprite) Update() {
 	model := translate.Mul4(scale)
 	model = sp.parent.Rotation.Mul4(model)
 
-	modelUniform := sp.shader.uniforms["model"]
-	gl.UniformMatrix4fv(modelUniform, 1, false, &model[0])
+	gl.UniformMatrix4fv(sp.shader.uniforms["model"], 1, false, &model[0])
 
 	gl.BindVertexArray(sp.vao)
 	gl.ActiveTexture(gl.TEXTURE0)

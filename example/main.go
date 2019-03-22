@@ -37,10 +37,8 @@ func main() {
 	camObj.AddComponent(cam)
 	scene.Add(camObj)
 	scene.Camera = cam
-
 	w.Update = func() {
 		scene.Draw()
-		obj.Position = obj.Position.Add(mgl32.Vec3{1, 0, 0})
 	}
 	w.Run()
 }
