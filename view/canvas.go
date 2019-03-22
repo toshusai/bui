@@ -1,7 +1,7 @@
 package view
 
 import (
-	"github.com/go-gl/gl/v2.1/gl"
+	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
 )
 
@@ -19,9 +19,9 @@ func NewCanvas(w *Window) *Canvas {
 }
 
 func (canvas *Canvas) Update() {
-	gl.UseProgram(program)
-	projectionUniform := gl.GetUniformLocation(program, gl.Str("projection\x00"))
-	viewUniform := gl.GetUniformLocation(program, gl.Str("view\x00"))
+	gl.UseProgram(spriteShader.program)
+	projectionUniform := spriteShader.uniforms["projection"]
+	viewUniform := spriteShader.uniforms["view"]
 
 	gl.UniformMatrix4fv(projectionUniform, 1, false, &canvas.projection[0])
 	gl.UniformMatrix4fv(viewUniform, 1, false, &canvas.view[0])

@@ -14,7 +14,6 @@ type Scene struct {
 // NewScene create a new scene
 func NewScene() *Scene {
 	var err error
-	program, err = newProgram(vertexShader, fragmentShader)
 	if err != nil {
 		panic(err)
 	}

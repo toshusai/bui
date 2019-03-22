@@ -12,8 +12,8 @@ import (
 
 func main() {
 	w := view.NewWindow(800, 600, "Test")
-
 	scene := view.NewScene()
+	view.InitShader()
 
 	tex, err := view.NewTexture("test_image_32px.png")
 	if err != nil {
@@ -40,6 +40,7 @@ func main() {
 
 	w.Update = func() {
 		scene.Draw()
+		obj.Position = obj.Position.Add(mgl32.Vec3{1, 0, 0})
 	}
 	w.Run()
 }
