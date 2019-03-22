@@ -81,3 +81,7 @@ func (sp *Sprite) Update() {
 	gl.BindTexture(gl.TEXTURE_2D, sp.Texture.texture)
 	gl.DrawArrays(gl.TRIANGLES, 0, 6)
 }
+
+func (sp *Sprite) Init() {
+
+}

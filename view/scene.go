@@ -29,6 +29,14 @@ func (scene *Scene) Add(obj *Object) {
 	scene.objects = append(scene.objects, obj)
 }
 
+func (scene *Scene) Start() {
+	for _, obj := range scene.objects {
+		for _, comp := range obj.components {
+			comp.Init()
+		}
+	}
+}
+
 // Draw all objects
 func (scene *Scene) Draw() {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)

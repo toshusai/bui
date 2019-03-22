@@ -26,3 +26,5 @@ func (cam *Camera) SetParent(obj *Object) {
 func (cam *Camera) Update() {
 
 }
+
+func (cam *Camera) Init() {}

@@ -1,6 +1,8 @@
 package view
 
 import (
+	"reflect"
+
 	"github.com/go-gl/mathgl/mgl32"
 )
 
@@ -25,4 +27,13 @@ func NewObject() *Object {
 func (obj *Object) AddComponent(comp component) {
 	comp.SetParent(obj)
 	obj.components = append(obj.components, comp)
+}
+
+func (obj *Object) GetComponent(value interface{}) component {
+	for _, comp := range obj.components {
+		if reflect.TypeOf(value) == reflect.TypeOf(comp) {
+			return comp
+		}
+	}
+	return nil
 }
