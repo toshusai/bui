@@ -23,7 +23,8 @@ func (btn *Button) Init() {
 }
 
 func (btn *Button) Update() {
-	if btn.parent.scene.Window.window.GetMouseButton(glfw.MouseButton1) == glfw.Press {
+	if btn.parent.scene.Window.GetMouseDown() {
+		fmt.Println(btn.parent.scene.Window.window.GetMouseButton(glfw.MouseButton1), prevMouseInput[glfw.MouseButton1])
 		xi, yi := btn.parent.scene.Window.window.GetCursorPos()
 		x := float32(xi)
 		y := float32(yi)

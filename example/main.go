@@ -28,7 +28,7 @@ func main() {
 
 	btn := view.NewButton()
 	btn.OnClick = func() {
-
+		obj.Position = obj.Position.Add(mgl32.Vec3{1, 1, 0})
 	}
 	obj.AddComponent(btn)
 	scene.Add(obj)

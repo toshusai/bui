@@ -61,9 +61,10 @@ func (w *Window) Run() {
 	defer glfw.Terminate()
 	gl.Enable(gl.BLEND)
 	gl.BlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
+	prevMouseInput = map[glfw.MouseButton]glfw.Action{}
 	for !w.window.ShouldClose() {
 		w.Update()
-
+		prevMouseInput[glfw.MouseButton1] = w.window.GetMouseButton(glfw.MouseButton1)
 		w.window.SwapBuffers()
 		glfw.PollEvents()
 	}
@@ -72,4 +73,12 @@ func (w *Window) Run() {
 // Close window
 func (w *Window) Close() {
 	w.window.SetShouldClose(true)
+}
+
+func (w *Window) GetMouseDown() bool {
+	if prevMouseInput[glfw.MouseButton1] == glfw.Release &&
+		w.window.GetMouseButton(glfw.MouseButton1) == glfw.Press {
+		return true
+	}
+	return false
 }
