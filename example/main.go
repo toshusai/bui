@@ -7,6 +7,7 @@ import (
 
 	_ "image/png"
 
+	"github.com/toshusai/bui/component"
 	"github.com/toshusai/bui/view"
 )
 
@@ -21,30 +22,30 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	sp := view.NewSprite(tex)
+	sp := component.NewSprite(tex)
 	obj := view.NewObject()
 	obj.Position = mgl32.Vec3{32, -32, 0}
 	obj.AddComponent(sp)
 
-	btn := view.NewButton()
+	btn := component.NewButton()
 	btn.OnClick = func() {
 		obj.Position = obj.Position.Add(mgl32.Vec3{1, 1, 0})
 	}
 	obj.AddComponent(btn)
 
-	can := view.NewCanvas(w)
+	can := component.NewCanvas(w)
 	canObj := view.NewObject()
 	scene.Add(canObj)
 	canObj.AddChild(obj)
 	canObj.AddComponent(can)
 	btn.Init()
 
-	cam := view.NewCamera()
+	cam := component.NewCamera()
 	camObj := view.NewObject()
 	camObj.Position = mgl32.Vec3{0, 0, -1}
 	camObj.AddComponent(cam)
 	scene.Add(camObj)
-	scene.Camera = cam
+
 	scene.Start()
 	w.Update = func() {
 		scene.Draw()

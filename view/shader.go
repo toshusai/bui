@@ -41,21 +41,25 @@ void main() {
 
 var spriteShader *Shader
 
+func GetSpriteShader() *Shader {
+	return spriteShader
+}
+
 type Shader struct {
 	program  uint32
-	uniforms map[string]int32
+	Uniforms map[string]int32
 }
 
 func InitShader() {
 	spriteShader = &Shader{
 		program:  newProgram(vertexShader, fragmentShader),
-		uniforms: map[string]int32{},
+		Uniforms: map[string]int32{},
 	}
-	spriteShader.uniforms["projection"] = gl.GetUniformLocation(spriteShader.program, gl.Str("projection\x00"))
-	spriteShader.uniforms["view"] = gl.GetUniformLocation(spriteShader.program, gl.Str("view\x00"))
-	spriteShader.uniforms["model"] = gl.GetUniformLocation(spriteShader.program, gl.Str("model\x00"))
-	spriteShader.uniforms["vert"] = gl.GetAttribLocation(spriteShader.program, gl.Str("vert\x00"))
-	spriteShader.uniforms["vertTexCoord"] = gl.GetAttribLocation(spriteShader.program, gl.Str("vertTexCoord\x00"))
+	spriteShader.Uniforms["projection"] = gl.GetUniformLocation(spriteShader.program, gl.Str("projection\x00"))
+	spriteShader.Uniforms["view"] = gl.GetUniformLocation(spriteShader.program, gl.Str("view\x00"))
+	spriteShader.Uniforms["model"] = gl.GetUniformLocation(spriteShader.program, gl.Str("model\x00"))
+	spriteShader.Uniforms["vert"] = gl.GetAttribLocation(spriteShader.program, gl.Str("vert\x00"))
+	spriteShader.Uniforms["vertTexCoord"] = gl.GetAttribLocation(spriteShader.program, gl.Str("vertTexCoord\x00"))
 }
 
 func (s *Shader) GetUnitform(str string) int32 {
@@ -68,6 +72,10 @@ func NewShader(vertexShaderSource, fragmentShaderSource string) *Shader {
 	return &Shader{
 		program: newProgram(vertexShaderSource, fragmentShaderSource),
 	}
+}
+
+func (s *Shader) GetProgram() uint32 {
+	return s.program
 }
 
 func newProgram(vertexShaderSource, fragmentShaderSource string) uint32 {

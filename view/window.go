@@ -59,10 +59,12 @@ func (w *Window) AddScene(scene *Scene) {
 // Run window loop
 func (w *Window) Run() {
 	defer glfw.Terminate()
+	gl.Viewport(0, 0, 1600, 1200)
 	gl.Enable(gl.BLEND)
 	gl.BlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
 	prevMouseInput = map[glfw.MouseButton]glfw.Action{}
 	for !w.window.ShouldClose() {
+		glfw.WaitEvents()
 		w.Update()
 		prevMouseInput[glfw.MouseButton1] = w.window.GetMouseButton(glfw.MouseButton1)
 		w.window.SwapBuffers()
@@ -81,4 +83,8 @@ func (w *Window) GetMouseDown() bool {
 		return true
 	}
 	return false
+}
+
+func (w *Window) GetCursorPos() (float64, float64) {
+	return w.window.GetCursorPos()
 }

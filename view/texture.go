@@ -16,6 +16,18 @@ type Texture struct {
 	height  int
 }
 
+func (tex *Texture) GetWidth() int {
+	return tex.width
+}
+
+func (tex *Texture) GetHeight() int {
+	return tex.height
+}
+
+func (tex *Texture) GetTexture() uint32 {
+	return tex.texture
+}
+
 // NewTexture create a new texture
 func NewTexture(file string) (*Texture, error) {
 	texture := &Texture{}

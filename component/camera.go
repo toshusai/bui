@@ -1,14 +1,15 @@
-package view
+package component
 
 import (
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/toshusai/bui/view"
 )
 
 // Camera !
 type Camera struct {
 	projection mgl32.Mat4
 	view       mgl32.Mat4
-	parent     *Object
+	parent     *view.Object
 }
 
 // NewCamera create a new camera
@@ -19,7 +20,7 @@ func NewCamera() *Camera {
 	}
 }
 
-func (cam *Camera) SetParent(obj *Object) {
+func (cam *Camera) SetParent(obj *view.Object) {
 	cam.parent = obj
 }
 

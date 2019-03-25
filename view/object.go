@@ -11,7 +11,6 @@ type Object struct {
 	Rotation   mgl32.Mat4
 	Scale      mgl32.Vec3
 	components []component
-	scene      *Scene
 	Parent     *Object
 	Children   []*Object
 }
@@ -30,8 +29,25 @@ func (obj *Object) AddComponent(comp component) {
 }
 
 func (obj *Object) AddChild(chld *Object) {
-	chld.scene = obj.scene
 	obj.Children = append(obj.Children, chld)
+}
+
+func (obj *Object) Init() {
+	for _, child := range obj.Children {
+		child.Init()
+	}
+	for _, comp := range obj.components {
+		comp.Init()
+	}
+}
+
+func (obj *Object) Update() {
+	for _, child := range obj.Children {
+		child.Update()
+	}
+	for _, comp := range obj.components {
+		comp.Update()
+	}
 }
 
 func (obj *Object) GetComponent(value interface{}) component {

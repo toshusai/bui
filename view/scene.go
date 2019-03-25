@@ -6,9 +6,14 @@ import (
 
 // Scene !
 type Scene struct {
-	Camera  *Camera
 	objects []*Object
 	Window  *Window
+}
+
+var currentScene *Scene
+
+func GetScene() *Scene {
+	return currentScene
 }
 
 // NewScene create a new scene
@@ -19,21 +24,18 @@ func NewScene() *Scene {
 	}
 
 	scene := &Scene{}
-
+	currentScene = scene
 	return scene
 }
 
 // Add sprite to scene
 func (scene *Scene) Add(obj *Object) {
-	obj.scene = scene
 	scene.objects = append(scene.objects, obj)
 }
 
 func (scene *Scene) Start() {
 	for _, obj := range scene.objects {
-		for _, comp := range obj.components {
-			comp.Init()
-		}
+		obj.Init()
 	}
 }
 
@@ -41,8 +43,6 @@ func (scene *Scene) Start() {
 func (scene *Scene) Draw() {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 	for _, obj := range scene.objects {
-		for _, comp := range obj.components {
-			comp.Update()
-		}
+		obj.Update()
 	}
 }
