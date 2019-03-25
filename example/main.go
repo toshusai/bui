@@ -12,8 +12,9 @@ import (
 
 func main() {
 	w := view.NewWindow(800, 600, "Test")
-
 	scene := view.NewScene()
+	w.AddScene(scene)
+	view.InitShader()
 
 	tex, err := view.NewTexture("test_image_32px.png")
 	if err != nil {
@@ -22,8 +23,15 @@ func main() {
 
 	sp := view.NewSprite(tex)
 	obj := view.NewObject()
-	obj.Position = mgl32.Vec3{0, 0, 0}
+	obj.Position = mgl32.Vec3{32, -32, 0}
 	obj.AddComponent(sp)
+
+	btn := view.NewButton()
+	btn.OnClick = func() {
+		obj.Position = obj.Position.Add(mgl32.Vec3{1, 1, 0})
+	}
+	obj.AddComponent(btn)
+	scene.Add(obj)
 
 	can := view.NewCanvas(w)
 	canObj := view.NewObject()
@@ -37,7 +45,7 @@ func main() {
 	camObj.AddComponent(cam)
 	scene.Add(camObj)
 	scene.Camera = cam
-
+	scene.Start()
 	w.Update = func() {
 		scene.Draw()
 	}

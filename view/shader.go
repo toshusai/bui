@@ -39,15 +39,46 @@ void main() {
 }
 ` + "\x00"
 
-func newProgram(vertexShaderSource, fragmentShaderSource string) (uint32, error) {
+var spriteShader *Shader
+
+type Shader struct {
+	program  uint32
+	uniforms map[string]int32
+}
+
+func InitShader() {
+	spriteShader = &Shader{
+		program:  newProgram(vertexShader, fragmentShader),
+		uniforms: map[string]int32{},
+	}
+	spriteShader.uniforms["projection"] = gl.GetUniformLocation(spriteShader.program, gl.Str("projection\x00"))
+	spriteShader.uniforms["view"] = gl.GetUniformLocation(spriteShader.program, gl.Str("view\x00"))
+	spriteShader.uniforms["model"] = gl.GetUniformLocation(spriteShader.program, gl.Str("model\x00"))
+	spriteShader.uniforms["vert"] = gl.GetAttribLocation(spriteShader.program, gl.Str("vert\x00"))
+	spriteShader.uniforms["vertTexCoord"] = gl.GetAttribLocation(spriteShader.program, gl.Str("vertTexCoord\x00"))
+}
+
+func (s *Shader) GetUnitform(str string) int32 {
+	i := gl.GetAttribLocation(s.program, gl.Str(str+"\x00"))
+	fmt.Println(i)
+	return i
+}
+
+func NewShader(vertexShaderSource, fragmentShaderSource string) *Shader {
+	return &Shader{
+		program: newProgram(vertexShaderSource, fragmentShaderSource),
+	}
+}
+
+func newProgram(vertexShaderSource, fragmentShaderSource string) uint32 {
 	vertexShader, err := compileShader(vertexShaderSource, gl.VERTEX_SHADER)
 	if err != nil {
-		return 0, err
+		panic(err)
 	}
 
 	fragmentShader, err := compileShader(fragmentShaderSource, gl.FRAGMENT_SHADER)
 	if err != nil {
-		return 0, err
+		panic(err)
 	}
 
 	program := gl.CreateProgram()
@@ -65,13 +96,13 @@ func newProgram(vertexShaderSource, fragmentShaderSource string) (uint32, error)
 		log := strings.Repeat("\x00", int(logLength+1))
 		gl.GetProgramInfoLog(program, logLength, nil, gl.Str(log))
 
-		return 0, fmt.Errorf("failed to link program: %v", log)
+		panic(err)
 	}
 
 	gl.DeleteShader(vertexShader)
 	gl.DeleteShader(fragmentShader)
 
-	return program, nil
+	return program
 }
 
 func compileShader(source string, shaderType uint32) (uint32, error) {

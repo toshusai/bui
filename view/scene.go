@@ -14,7 +14,6 @@ type Scene struct {
 // NewScene create a new scene
 func NewScene() *Scene {
 	var err error
-	program, err = newProgram(vertexShader, fragmentShader)
 	if err != nil {
 		panic(err)
 	}
@@ -28,6 +27,14 @@ func NewScene() *Scene {
 func (scene *Scene) Add(obj *Object) {
 	obj.scene = scene
 	scene.objects = append(scene.objects, obj)
+}
+
+func (scene *Scene) Start() {
+	for _, obj := range scene.objects {
+		for _, comp := range obj.components {
+			comp.Init()
+		}
+	}
 }
 
 // Draw all objects

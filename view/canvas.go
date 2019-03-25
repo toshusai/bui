@@ -18,20 +18,27 @@ func NewCanvas(w *Window) *Canvas {
 	}
 }
 
-func (canvas *Canvas) Update() {
-	gl.UseProgram(program)
-	projectionUniform := gl.GetUniformLocation(program, gl.Str("projection\x00"))
-	viewUniform := gl.GetUniformLocation(program, gl.Str("view\x00"))
+func (c *Canvas) Init() {
+	hW := float32(c.parent.scene.Window.Width / 2)
+	hH := float32(c.parent.scene.Window.Height / 2)
+	c.projection = mgl32.Ortho(-hW, hW, -hH, hH, 0, 100)
+	c.view = mgl32.LookAtV(mgl32.Vec3{hW, -hH, 50}, mgl32.Vec3{hW, -hH, 0}, mgl32.Vec3{0, 1, 0})
+}
 
-	gl.UniformMatrix4fv(projectionUniform, 1, false, &canvas.projection[0])
-	gl.UniformMatrix4fv(viewUniform, 1, false, &canvas.view[0])
-	for _, obj := range canvas.parent.Children {
+func (c *Canvas) Update() {
+	gl.UseProgram(spriteShader.program)
+	projectionUniform := spriteShader.uniforms["projection"]
+	viewUniform := spriteShader.uniforms["view"]
+
+	gl.UniformMatrix4fv(projectionUniform, 1, false, &c.projection[0])
+	gl.UniformMatrix4fv(viewUniform, 1, false, &c.view[0])
+	for _, obj := range c.parent.Children {
 		for _, comp := range obj.components {
 			comp.Update()
 		}
 	}
 }
 
-func (canvas *Canvas) SetParent(obj *Object) {
-	canvas.parent = obj
+func (c *Canvas) SetParent(obj *Object) {
+	c.parent = obj
 }

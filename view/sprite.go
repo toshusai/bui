@@ -10,16 +10,14 @@ type Sprite struct {
 	Texture  *Texture
 	vertices []float32
 	vao      uint32
-	program  uint32
-	Scale    mgl32.Vec3
 	parent   *Object
+	shader   *Shader
 }
-
-var program uint32
 
 // NewSprite create a new sprite
 func NewSprite(tex *Texture) *Sprite {
 	sp := &Sprite{}
+	sp.shader = spriteShader
 	sp.Texture = tex
 	sp.vertices = []float32{
 		0, 0, 0.0, 0, 0.0,
@@ -33,17 +31,16 @@ func NewSprite(tex *Texture) *Sprite {
 
 	gl.GenVertexArrays(1, &sp.vao)
 	gl.BindVertexArray(sp.vao)
-	sp.program = program
 	var vbo uint32
 	gl.GenBuffers(1, &vbo)
 	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
 	gl.BufferData(gl.ARRAY_BUFFER, len(sp.vertices)*4, gl.Ptr(sp.vertices), gl.STATIC_DRAW)
 
-	vertAttrib := uint32(gl.GetAttribLocation(sp.program, gl.Str("vert\x00")))
+	vertAttrib := uint32(sp.shader.uniforms["vert"])
 	gl.EnableVertexAttribArray(vertAttrib)
 	gl.VertexAttribPointer(vertAttrib, 3, gl.FLOAT, false, 5*4, gl.PtrOffset(0))
 
-	texCoordAttrib := uint32(gl.GetAttribLocation(sp.program, gl.Str("vertTexCoord\x00")))
+	texCoordAttrib := uint32(sp.shader.uniforms["vertTexCoord"])
 	gl.EnableVertexAttribArray(texCoordAttrib)
 	gl.VertexAttribPointer(texCoordAttrib, 2, gl.FLOAT, false, 5*4, gl.PtrOffset(3*4))
 
@@ -77,11 +74,14 @@ func (sp *Sprite) Update() {
 	model := translate.Mul4(scale)
 	model = sp.parent.Rotation.Mul4(model)
 
-	modelUniform := gl.GetUniformLocation(sp.program, gl.Str("model\x00"))
-	gl.UniformMatrix4fv(modelUniform, 1, false, &model[0])
+	gl.UniformMatrix4fv(sp.shader.uniforms["model"], 1, false, &model[0])
 
 	gl.BindVertexArray(sp.vao)
 	gl.ActiveTexture(gl.TEXTURE0)
 	gl.BindTexture(gl.TEXTURE_2D, sp.Texture.texture)
 	gl.DrawArrays(gl.TRIANGLES, 0, 6)
+}
+
+func (sp *Sprite) Init() {
+
 }
