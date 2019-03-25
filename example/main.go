@@ -31,13 +31,13 @@ func main() {
 		obj.Position = obj.Position.Add(mgl32.Vec3{1, 1, 0})
 	}
 	obj.AddComponent(btn)
-	scene.Add(obj)
 
 	can := view.NewCanvas(w)
 	canObj := view.NewObject()
-	canObj.Children = []*view.Object{obj}
-	canObj.AddComponent(can)
 	scene.Add(canObj)
+	canObj.AddChild(obj)
+	canObj.AddComponent(can)
+	btn.Init()
 
 	cam := view.NewCamera()
 	camObj := view.NewObject()

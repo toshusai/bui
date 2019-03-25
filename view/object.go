@@ -29,6 +29,11 @@ func (obj *Object) AddComponent(comp component) {
 	obj.components = append(obj.components, comp)
 }
 
+func (obj *Object) AddChild(chld *Object) {
+	chld.scene = obj.scene
+	obj.Children = append(obj.Children, chld)
+}
+
 func (obj *Object) GetComponent(value interface{}) component {
 	for _, comp := range obj.components {
 		if reflect.TypeOf(value) == reflect.TypeOf(comp) {
