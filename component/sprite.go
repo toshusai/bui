@@ -12,13 +12,13 @@ type Sprite struct {
 	vertices []float32
 	vao      uint32
 	parent   *view.Object
-	shader   *view.Shader
+	Shader   *view.Shader
 }
 
 // NewSprite create a new sprite
 func NewSprite(tex *view.Texture) *Sprite {
 	sp := &Sprite{}
-	sp.shader = view.GetSpriteShader()
+	sp.Shader = view.GetSpriteShader()
 	sp.Texture = tex
 	sp.vertices = []float32{
 		0, 0, 0.0, 0, 0.0,
@@ -37,11 +37,11 @@ func NewSprite(tex *view.Texture) *Sprite {
 	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
 	gl.BufferData(gl.ARRAY_BUFFER, len(sp.vertices)*4, gl.Ptr(sp.vertices), gl.STATIC_DRAW)
 
-	vertAttrib := uint32(sp.shader.Uniforms["vert"])
+	vertAttrib := uint32(sp.Shader.Uniforms["vert"])
 	gl.EnableVertexAttribArray(vertAttrib)
 	gl.VertexAttribPointer(vertAttrib, 3, gl.FLOAT, false, 5*4, gl.PtrOffset(0))
 
-	texCoordAttrib := uint32(sp.shader.Uniforms["vertTexCoord"])
+	texCoordAttrib := uint32(sp.Shader.Uniforms["vertTexCoord"])
 	gl.EnableVertexAttribArray(texCoordAttrib)
 	gl.VertexAttribPointer(texCoordAttrib, 2, gl.FLOAT, false, 5*4, gl.PtrOffset(3*4))
 
@@ -53,6 +53,8 @@ func (sp *Sprite) SetParent(obj *view.Object) {
 }
 
 func (sp *Sprite) Update() {
+	v := view.GetSpriteShader()
+	gl.UseProgram(v.GetProgram())
 
 	translate := mgl32.Translate3D(
 		sp.parent.Position.X(),
@@ -64,23 +66,16 @@ func (sp *Sprite) Update() {
 		sp.parent.Scale.Y(),
 		sp.parent.Scale.Z())
 
-	// sp.parent.Rotation = mgl32.LookAt(
-	// 	0, 0, 0,
-	// 	-sp.parent.scene.Camera.parent.Position.X(),
-	// 	-sp.parent.scene.Camera.parent.Position.Y(),
-	// 	-sp.parent.scene.Camera.parent.Position.Z(),
-	// 	0, 1, 0)
-	// sp.parent.Rotation = sp.parent.Rotation.Inv()
-
 	model := translate.Mul4(scale)
 	model = sp.parent.Rotation.Mul4(model)
 
-	gl.UniformMatrix4fv(sp.shader.Uniforms["model"], 1, false, &model[0])
+	gl.UniformMatrix4fv(sp.Shader.Uniforms["model"], 1, false, &model[0])
 
 	gl.BindVertexArray(sp.vao)
 	gl.ActiveTexture(gl.TEXTURE0)
 	gl.BindTexture(gl.TEXTURE_2D, sp.Texture.GetTexture())
 	gl.DrawArrays(gl.TRIANGLES, 0, 6)
+
 }
 
 func (sp *Sprite) Init() {

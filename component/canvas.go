@@ -29,12 +29,13 @@ func (c *Canvas) Init() {
 
 func (c *Canvas) Update() {
 	spriteShader := view.GetSpriteShader()
+	simpleShader := view.GetSimpleShader()
 	gl.UseProgram(spriteShader.GetProgram())
-	projectionUniform := spriteShader.Uniforms["projection"]
-	viewUniform := spriteShader.Uniforms["view"]
-
-	gl.UniformMatrix4fv(projectionUniform, 1, false, &c.projection[0])
-	gl.UniformMatrix4fv(viewUniform, 1, false, &c.view[0])
+	gl.UniformMatrix4fv(spriteShader.Uniforms["projection"], 1, false, &c.projection[0])
+	gl.UniformMatrix4fv(spriteShader.Uniforms["view"], 1, false, &c.view[0])
+	gl.UseProgram(simpleShader.GetProgram())
+	gl.UniformMatrix4fv(simpleShader.Uniforms["projection"], 1, false, &c.projection[0])
+	gl.UniformMatrix4fv(simpleShader.Uniforms["view"], 1, false, &c.view[0])
 }
 
 func (c *Canvas) SetParent(obj *view.Object) {

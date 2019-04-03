@@ -39,10 +39,38 @@ void main() {
 }
 ` + "\x00"
 
+var simpleVS = `
+#version 330
+
+uniform mat4 projection;
+uniform mat4 view;
+uniform mat4 model;
+
+in vec3 vert;
+
+void main() {
+    gl_Position = projection * view * model * vec4(vert, 1);
+}
+` + "\x00"
+
+var simpleFS = `
+#version 330
+out vec4 outputColor;
+
+void main() {
+    outputColor = vec4(1.0, 0.0, 0.0, 1.0);
+}
+` + "\x00"
+
 var spriteShader *Shader
+var simpleShader *Shader
 
 func GetSpriteShader() *Shader {
 	return spriteShader
+}
+
+func GetSimpleShader() *Shader {
+	return simpleShader
 }
 
 type Shader struct {
@@ -60,6 +88,15 @@ func InitShader() {
 	spriteShader.Uniforms["model"] = gl.GetUniformLocation(spriteShader.program, gl.Str("model\x00"))
 	spriteShader.Uniforms["vert"] = gl.GetAttribLocation(spriteShader.program, gl.Str("vert\x00"))
 	spriteShader.Uniforms["vertTexCoord"] = gl.GetAttribLocation(spriteShader.program, gl.Str("vertTexCoord\x00"))
+
+	simpleShader = &Shader{
+		program:  newProgram(simpleVS, simpleFS),
+		Uniforms: map[string]int32{},
+	}
+	simpleShader.Uniforms["projection"] = gl.GetUniformLocation(simpleShader.program, gl.Str("projection\x00"))
+	simpleShader.Uniforms["view"] = gl.GetUniformLocation(simpleShader.program, gl.Str("view\x00"))
+	simpleShader.Uniforms["model"] = gl.GetUniformLocation(simpleShader.program, gl.Str("model\x00"))
+	simpleShader.Uniforms["vert"] = gl.GetAttribLocation(simpleShader.program, gl.Str("vert\x00"))
 }
 
 func (s *Shader) GetUnitform(str string) int32 {

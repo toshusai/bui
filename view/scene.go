@@ -41,6 +41,7 @@ func (scene *Scene) Start() {
 
 // Draw all objects
 func (scene *Scene) Draw() {
+	// gl.ClearColor(1.0, 1.0, 0, 1.0)
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 	for _, obj := range scene.objects {
 		obj.Update()

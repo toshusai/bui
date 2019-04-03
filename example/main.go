@@ -12,6 +12,7 @@ import (
 )
 
 func main() {
+
 	w := view.NewWindow(800, 600, "Test")
 	scene := view.NewScene()
 	w.AddScene(scene)
@@ -35,16 +36,23 @@ func main() {
 
 	can := component.NewCanvas(w)
 	canObj := view.NewObject()
-	scene.Add(canObj)
 	canObj.AddChild(obj)
 	canObj.AddComponent(can)
 	btn.Init()
+
+	sqObj := view.NewObject()
+	sqObj.Position = mgl32.Vec3{100, -100, 0}
+	sq := component.NewSquare()
+	sqObj.AddComponent(sq)
+	canObj.AddChild(sqObj)
 
 	cam := component.NewCamera()
 	camObj := view.NewObject()
 	camObj.Position = mgl32.Vec3{0, 0, -1}
 	camObj.AddComponent(cam)
-	scene.Add(camObj)
+
+	scene.Add(canObj)
+	// scene.Add(camObj)
 
 	scene.Start()
 	w.Update = func() {
