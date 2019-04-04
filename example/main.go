@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 
+	"github.com/toshusai/bui/glfont"
+
 	"github.com/go-gl/mathgl/mgl32"
 
 	_ "image/png"
@@ -53,10 +55,16 @@ func main() {
 
 	scene.Add(canObj)
 	// scene.Add(camObj)
+	f, e := glfont.LoadFont("/Library/Fonts/Arial Bold.ttf", 50, 800, 600)
+	if e != nil {
+		panic(e)
+	}
 
 	scene.Start()
 	w.Update = func() {
 		scene.Draw()
+		f.SetColor(0, 1, 0, 1)
+		f.Printf(300, 300, 1, "Test")
 	}
 	w.Run()
 }

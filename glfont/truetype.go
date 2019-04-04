@@ -8,10 +8,9 @@ import (
 	"io/ioutil"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
-
+	"github.com/golang/freetype"
+	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font"
-	"golang.org/x/image/font/opentype"
-	"golang.org/x/image/font/sfnt"
 	"golang.org/x/image/math/fixed"
 )
 
@@ -32,7 +31,7 @@ func LoadTrueTypeFont(program uint32, r io.Reader, scale int32, low, high rune, 
 	}
 
 	// Read the truetype font.
-	ttf, err := sfnt.Parse(data)
+	ttf, err := truetype.Parse(data)
 	if err != nil {
 		return nil, err
 	}
@@ -49,14 +48,11 @@ func LoadTrueTypeFont(program uint32, r io.Reader, scale int32, low, high rune, 
 		char := new(character)
 
 		//create new face to measure glyph diamensions
-		ttfFace, err := opentype.NewFace(ttf, &opentype.FaceOptions{
+		ttfFace := truetype.NewFace(ttf, &truetype.Options{
 			Size:    float64(scale),
 			DPI:     72,
 			Hinting: font.HintingFull,
 		})
-		if err != nil {
-			return nil, err
-		}
 
 		gBnd, gAdv, ok := ttfFace.GlyphBounds(ch)
 		if ok != true {
@@ -68,10 +64,7 @@ func LoadTrueTypeFont(program uint32, r io.Reader, scale int32, low, high rune, 
 
 		//if gylph has no diamensions set to a max value
 		if gw == 0 || gh == 0 {
-			gBnd, err = ttf.Bounds(&sfnt.Buffer{}, fixed.Int26_6(scale), font.HintingFull)
-			if err != nil {
-				return nil, err
-			}
+			gBnd = ttf.Bounds(fixed.Int26_6(scale))
 			gw = int32((gBnd.Max.X - gBnd.Min.X) >> 6)
 			gh = int32((gBnd.Max.Y - gBnd.Min.Y) >> 6)
 
@@ -83,7 +76,7 @@ func LoadTrueTypeFont(program uint32, r io.Reader, scale int32, low, high rune, 
 		}
 
 		//The glyph's ascent and descent equal -bounds.Min.Y and +bounds.Max.Y.
-		// gAscent := int(-gBnd.Min.Y) >> 6
+		gAscent := int(-gBnd.Min.Y) >> 6
 		gdescent := int(gBnd.Max.Y) >> 6
 
 		//set w,h and adv, bearing V and bearing H in char
@@ -94,10 +87,31 @@ func LoadTrueTypeFont(program uint32, r io.Reader, scale int32, low, high rune, 
 		char.bearingH = (int(gBnd.Min.X) >> 6)
 
 		//create image to draw glyph
-		bg := image.Black
+		fg, bg := image.White, image.Black
 		rect := image.Rect(0, 0, int(gw), int(gh))
 		rgba := image.NewRGBA(rect)
 		draw.Draw(rgba, rgba.Bounds(), bg, image.ZP, draw.Src)
+
+		//create a freetype context for drawing
+		c := freetype.NewContext()
+		c.SetDPI(72)
+		c.SetFont(ttf)
+		c.SetFontSize(float64(scale))
+		c.SetClip(rgba.Bounds())
+		c.SetDst(rgba)
+		c.SetSrc(fg)
+		c.SetHinting(font.HintingFull)
+
+		//set the glyph dot
+		px := 0 - (int(gBnd.Min.X) >> 6)
+		py := (gAscent)
+		pt := freetype.Pt(px, py)
+
+		// Draw the text from mask to image
+		_, err = c.DrawString(string(ch), pt)
+		if err != nil {
+			return nil, err
+		}
 
 		// Generate texture
 		var texture uint32
