@@ -1,8 +1,6 @@
 package component
 
 import (
-	"fmt"
-
 	"github.com/toshusai/bui/view"
 )
 
@@ -32,7 +30,6 @@ func (btn *Button) Update() {
 		y1 := -btn.parent.Position.Y()
 		x2 := x1 + float32(btn.sprite.Texture.GetWidth())
 		y2 := y1 + float32(btn.sprite.Texture.GetHeight())
-		fmt.Println(x, y, x1, y1, x2, y2)
 		if x > x1 && y > y1 && x < x2 && y < y2 {
 			btn.OnClick()
 		}
