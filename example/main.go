@@ -13,6 +13,9 @@ import (
 	"github.com/toshusai/bui/view"
 )
 
+type Drag struct {
+}
+
 func main() {
 	count := 0
 
@@ -48,26 +51,44 @@ func main() {
 	text.Color = bui.Color{1, 0, 0, 1}
 	canObj.AddChild(textObj)
 
+	// Create Object (Square)
+	sqObj := view.NewObject()
+	sqObj.Position = mgl32.Vec3{100, -100, 0}
+	sq := component.NewSquare()
+	rt := &component.RectTransform{}
+	rt.Width = 50
+	rt.Height = 50
+	sqObj.AddComponent(rt)
+	sqObj.AddComponent(sq)
+	canObj.AddChild(sqObj)
+
 	// Create Object (Sprite, Button)
 	sp := component.NewSprite(tex)
 	spObj := view.NewObject()
 	spObj.Position = mgl32.Vec3{32, -32, 0}
 	spObj.AddComponent(sp)
 
+	rt2 := &component.RectTransform{}
+	rt2.Width = 50
+	rt2.Height = 50
+	spObj.AddComponent(rt2)
+
 	btn := component.NewButton()
-	btn.OnClick = func() {
+	btn.OnPointerDwon = func() {
 		count++
 		text.Text = fmt.Sprintf("+%d", count)
+		rt.Width += 2
+		rt2.Width += 2
+	}
+	btn.OnDrag = func() {
+		x, y := w.GetCursorPos()
+		spObj.Position = mgl32.Vec3{float32(x), -float32(y), 0}
+	}
+	btn.OnPointerDwon = func() {
+		fmt.Println("Hey")
 	}
 	spObj.AddComponent(btn)
 	canObj.AddChild(spObj)
-
-	// Create Object (Square)
-	sqObj := view.NewObject()
-	sqObj.Position = mgl32.Vec3{100, -100, 0}
-	sq := component.NewSquare()
-	sqObj.AddComponent(sq)
-	canObj.AddChild(sqObj)
 
 	scene.Add(canObj)
 
