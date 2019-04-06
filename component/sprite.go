@@ -53,6 +53,8 @@ func (sp *Sprite) SetParent(obj *view.Object) {
 }
 
 func (sp *Sprite) Update() {
+	gl.Enable(gl.BLEND)
+	gl.BlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
 	v := view.GetSpriteShader()
 	gl.UseProgram(v.GetProgram())
 

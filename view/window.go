@@ -60,7 +60,6 @@ func (w *Window) AddScene(scene *Scene) {
 func (w *Window) Run() {
 	defer glfw.Terminate()
 	gl.Enable(gl.BLEND)
-	gl.BlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
 	gl.ClearColor(1.0, 1.0, 1.0, 1.0)
 	prevMouseInput = map[glfw.MouseButton]glfw.Action{}
 	for !w.window.ShouldClose() {
