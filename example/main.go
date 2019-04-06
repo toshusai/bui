@@ -16,6 +16,31 @@ import (
 type Drag struct {
 }
 
+func NewDragObject(w *view.Window, P *view.Object) *view.Object {
+	obj := view.NewObject()
+	obj.Position = mgl32.Vec3{300, -100, 0}
+
+	sq := component.NewSquare()
+	obj.AddComponent(sq)
+
+	rt := &component.RectTransform{}
+	rt.Width = 50
+	rt.Height = 50
+	obj.AddComponent(rt)
+
+	btn := component.NewButton()
+	trt := P.GetComponent(&component.RectTransform{}).(*component.RectTransform)
+	btn.OnDrag = func() {
+		x, y := w.GetCursorPos()
+		obj.Position = mgl32.Vec3{float32(x) - rt.Width/2, -float32(y) + rt.Height/2, 0}
+		trt.Width = float32(x) - P.Position.X()
+		trt.Height = float32(y) + P.Position.Y()
+	}
+	obj.AddComponent(btn)
+
+	return obj
+}
+
 func main() {
 	count := 0
 
@@ -82,13 +107,16 @@ func main() {
 	}
 	btn.OnDrag = func() {
 		x, y := w.GetCursorPos()
-		spObj.Position = mgl32.Vec3{float32(x), -float32(y), 0}
+		spObj.Position = mgl32.Vec3{float32(x) - rt2.Width/2, -float32(y) + rt2.Height/2, 0}
 	}
 	btn.OnPointerDwon = func() {
 		fmt.Println("Hey")
 	}
 	spObj.AddComponent(btn)
 	canObj.AddChild(spObj)
+
+	d := NewDragObject(w, spObj)
+	canObj.AddChild(d)
 
 	scene.Add(canObj)
 
