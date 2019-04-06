@@ -55,7 +55,7 @@ func main() {
 
 	scene.Add(canObj)
 	// scene.Add(camObj)
-	f, e := glfont.LoadFont("/Library/Fonts/Arial Bold.ttf", 50, 800, 600)
+	f, e := glfont.LoadFont("C:/Windows/Fonts/meiryo.ttc", 50, 800, 600)
 	if e != nil {
 		panic(e)
 	}
@@ -64,7 +64,7 @@ func main() {
 	w.Update = func() {
 		scene.Draw()
 		f.SetColor(0, 1, 0, 1)
-		f.Printf(300, 300, 1, "Test")
+		f.Printf(300, 300, 1, "testtest")
 	}
 	w.Run()
 }
