@@ -1,54 +1,66 @@
 package main
 
 import (
+	"fmt"
 	"log"
-
-	"github.com/toshusai/bui"
 
 	"github.com/go-gl/mathgl/mgl32"
 
 	_ "image/png"
 
+	"github.com/toshusai/bui"
 	"github.com/toshusai/bui/component"
 	"github.com/toshusai/bui/view"
 )
 
 func main() {
+	count := 0
 
 	w := view.NewWindow(800, 600, "Test")
 	scene := view.NewScene()
 	w.AddScene(scene)
 	view.InitShader()
 
-	// Create texture
+	// Create Object (Canvas)
+	can := component.NewCanvas(w)
+	canObj := view.NewObject()
+	canObj.AddComponent(can)
+
+	// Create Texture
 	tex, err := view.NewTexture("test_image_32px.png")
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	f, e := view.LoadFont("C:/Windows/Fonts/meiryo.ttc", 50, 800, 600)
+	// Create Font
+	f, e := view.LoadFont("C:/Windows/Fonts/meiryo.ttc", 32, 800, 600)
 	if e != nil {
 		panic(e)
 	}
 
+	// Create Object (Text)
+	textObj := view.NewObject()
+	textObj.Position = mgl32.Vec3{200, 200, 0}
+	text := component.NewText()
+	textObj.AddComponent(text)
+	text.Size = 1
+	text.Font = f
+	text.Color = bui.Color{1, 0, 0, 1}
+	canObj.AddChild(textObj)
+
 	// Create Object (Sprite, Button)
 	sp := component.NewSprite(tex)
-	obj := view.NewObject()
-	obj.Position = mgl32.Vec3{32, -32, 0}
-	obj.AddComponent(sp)
+	spObj := view.NewObject()
+	spObj.Position = mgl32.Vec3{32, -32, 0}
+	spObj.AddComponent(sp)
 
 	btn := component.NewButton()
 	btn.OnClick = func() {
-		obj.Position = obj.Position.Add(mgl32.Vec3{1, 1, 0})
+		count++
+		text.Text = fmt.Sprintf("+%d", count)
 	}
-	obj.AddComponent(btn)
-
-	// Create Object (Canvas)
-	can := component.NewCanvas(w)
-	canObj := view.NewObject()
-	canObj.AddChild(obj)
-	canObj.AddComponent(can)
-	btn.Init()
+	spObj.AddComponent(btn)
+	canObj.AddChild(spObj)
 
 	// Create Object (Square)
 	sqObj := view.NewObject()
@@ -57,24 +69,7 @@ func main() {
 	sqObj.AddComponent(sq)
 	canObj.AddChild(sqObj)
 
-	// Create Object (Text)
-	textObj := view.NewObject()
-	textObj.Position = mgl32.Vec3{200, 200, 0}
-	text := component.NewText()
-	textObj.AddComponent(text)
-	text.Size = 1
-	text.Text = "Hey"
-	text.Font = f
-	text.Color = bui.Color{1, 0, 0, 1}
-	canObj.AddChild(textObj)
-
-	// cam := component.NewCamera()
-	// camObj := view.NewObject()
-	// camObj.Position = mgl32.Vec3{0, 0, -1}
-	// camObj.AddComponent(cam)
-
 	scene.Add(canObj)
-	// scene.Add(camObj)
 
 	scene.Start()
 	w.Update = func() {
