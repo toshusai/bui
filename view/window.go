@@ -83,6 +83,14 @@ func (w *Window) GetMouseDown() bool {
 	return false
 }
 
+func (w *Window) GetMouseUp() bool {
+	if prevMouseInput[glfw.MouseButton1] == glfw.Press &&
+		w.window.GetMouseButton(glfw.MouseButton1) == glfw.Release {
+		return true
+	}
+	return false
+}
+
 func (w *Window) GetCursorPos() (float64, float64) {
 	return w.window.GetCursorPos()
 }

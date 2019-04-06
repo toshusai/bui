@@ -7,30 +7,31 @@ import (
 )
 
 type Square struct {
-	vertices []float32
-	vao      uint32
-	parent   *view.Object
-	Shader   *view.Shader
+	vertices      []float32
+	vao           uint32
+	vbo           uint32
+	parent        *view.Object
+	Shader        *view.Shader
+	rectTransform *RectTransform
 }
 
 func NewSquare() *Square {
 	sq := &Square{}
 	sq.vertices = []float32{
 		0, 0, 0,
-		0, -50, 0,
-		50, 0, 0,
+		0, -1, 0,
+		1, 0, 0,
 
-		0, -50, 0,
-		50, -50, 0,
-		50, 0, 0,
+		0, -1, 0,
+		1, -1, 0,
+		1, 0, 0,
 	}
 
 	gl.GenVertexArrays(1, &sq.vao)
 	gl.BindVertexArray(sq.vao)
-	var vbo uint32
-	gl.GenBuffers(1, &vbo)
-	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
-	gl.BufferData(gl.ARRAY_BUFFER, len(sq.vertices)*4, gl.Ptr(sq.vertices), gl.STATIC_DRAW)
+	gl.GenBuffers(1, &sq.vbo)
+	gl.BindBuffer(gl.ARRAY_BUFFER, sq.vbo)
+	gl.BufferData(gl.ARRAY_BUFFER, len(sq.vertices)*4, gl.Ptr(sq.vertices), gl.DYNAMIC_DRAW)
 
 	sq.Shader = view.GetSimpleShader()
 	vertAttrib := uint32(sq.Shader.Uniforms["vert"])
@@ -43,9 +44,23 @@ func (sq *Square) SetParent(obj *view.Object) {
 	sq.parent = obj
 }
 
+func (sq *Square) Init() {
+	sq.rectTransform = sq.parent.GetComponent(&RectTransform{}).(*RectTransform)
+}
+
 func (sq *Square) Update() {
 	v := view.GetSimpleShader()
 	gl.UseProgram(v.GetProgram())
+
+	sq.vertices[4] = -sq.rectTransform.Height
+	sq.vertices[6] = sq.rectTransform.Width
+	sq.vertices[10] = -sq.rectTransform.Height
+	sq.vertices[12] = sq.rectTransform.Width
+	sq.vertices[13] = -sq.rectTransform.Height
+	sq.vertices[15] = sq.rectTransform.Width
+
+	gl.BindBuffer(gl.ARRAY_BUFFER, sq.vbo)
+	gl.BufferSubData(gl.ARRAY_BUFFER, 0, len(sq.vertices)*4, gl.Ptr(sq.vertices))
 
 	translate := mgl32.Translate3D(
 		sq.parent.Position.X(),
@@ -64,8 +79,4 @@ func (sq *Square) Update() {
 
 	gl.BindVertexArray(sq.vao)
 	gl.DrawArrays(gl.TRIANGLES, 0, 6)
-}
-
-func (sq *Square) Init() {
-
 }

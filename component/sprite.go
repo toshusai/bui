@@ -8,11 +8,13 @@ import (
 
 // Sprite is 2D image
 type Sprite struct {
-	Texture  *view.Texture
-	vertices []float32
-	vao      uint32
-	parent   *view.Object
-	Shader   *view.Shader
+	Texture       *view.Texture
+	vertices      []float32
+	vao           uint32
+	vbo           uint32
+	parent        *view.Object
+	Shader        *view.Shader
+	rectTransform *RectTransform
 }
 
 // NewSprite create a new sprite
@@ -32,10 +34,10 @@ func NewSprite(tex *view.Texture) *Sprite {
 
 	gl.GenVertexArrays(1, &sp.vao)
 	gl.BindVertexArray(sp.vao)
-	var vbo uint32
-	gl.GenBuffers(1, &vbo)
-	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
-	gl.BufferData(gl.ARRAY_BUFFER, len(sp.vertices)*4, gl.Ptr(sp.vertices), gl.STATIC_DRAW)
+
+	gl.GenBuffers(1, &sp.vbo)
+	gl.BindBuffer(gl.ARRAY_BUFFER, sp.vbo)
+	gl.BufferData(gl.ARRAY_BUFFER, len(sp.vertices)*4, gl.Ptr(sp.vertices), gl.DYNAMIC_DRAW)
 
 	vertAttrib := uint32(sp.Shader.Uniforms["vert"])
 	gl.EnableVertexAttribArray(vertAttrib)
@@ -58,6 +60,15 @@ func (sp *Sprite) Update() {
 	v := view.GetSpriteShader()
 	gl.UseProgram(v.GetProgram())
 
+	sp.vertices[6] = -sp.rectTransform.Height
+	sp.vertices[10] = sp.rectTransform.Width
+	sp.vertices[16] = -sp.rectTransform.Height
+	sp.vertices[20] = sp.rectTransform.Width
+	sp.vertices[21] = -sp.rectTransform.Height
+	sp.vertices[25] = sp.rectTransform.Width
+
+	gl.BindBuffer(gl.ARRAY_BUFFER, sp.vbo)
+	gl.BufferSubData(gl.ARRAY_BUFFER, 0, len(sp.vertices)*4, gl.Ptr(sp.vertices))
 	translate := mgl32.Translate3D(
 		sp.parent.Position.X(),
 		sp.parent.Position.Y(),
@@ -81,5 +92,6 @@ func (sp *Sprite) Update() {
 }
 
 func (sp *Sprite) Init() {
+	sp.rectTransform = sp.parent.GetComponent(&RectTransform{}).(*RectTransform)
 
 }
