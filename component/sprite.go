@@ -61,30 +61,28 @@ func (sp *Sprite) Update() {
 	gl.UseProgram(v.GetProgram())
 
 	var translate mgl32.Mat4
-	var x, y, w, h float32
+	var x, y float32
 	if sp.rectTransform.IsPivotX() {
-		w = sp.rectTransform.Width
 		x = sp.parent.Position.X()
 	} else {
 		x = sp.rectTransform.GetAnchorsMinX()
 		maxX := sp.rectTransform.GetAnchorsMaxX()
-		w = maxX - x
+		sp.rectTransform.Width = maxX - x
 	}
 
 	if sp.rectTransform.IsPivotY() {
-		h = sp.rectTransform.Height
 		y = sp.parent.Position.Y()
 	} else {
 		y = sp.rectTransform.GetAnchorsMinY()
 		maxY := sp.rectTransform.GetAnchorsMaxY()
-		h = maxY - y
+		sp.rectTransform.Height = maxY - y
 	}
-	sp.vertices[6] = -h
-	sp.vertices[10] = w
-	sp.vertices[16] = -h
-	sp.vertices[20] = w
-	sp.vertices[21] = -h
-	sp.vertices[25] = w
+	sp.vertices[6] = -sp.rectTransform.Height
+	sp.vertices[10] = sp.rectTransform.Width
+	sp.vertices[16] = -sp.rectTransform.Height
+	sp.vertices[20] = sp.rectTransform.Width
+	sp.vertices[21] = -sp.rectTransform.Height
+	sp.vertices[25] = sp.rectTransform.Width
 	gl.BindBuffer(gl.ARRAY_BUFFER, sp.vbo)
 	gl.BufferSubData(gl.ARRAY_BUFFER, 0, len(sp.vertices)*4, gl.Ptr(sp.vertices))
 	translate = mgl32.Translate3D(
