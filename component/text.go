@@ -103,7 +103,6 @@ func (t *Text) Update() {
 		x += float32((ch.Advance >> 6)) * t.Size // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
 
 	}
-
 	//clear opengl textures and programs
 	gl.BindVertexArray(0)
 	gl.BindTexture(gl.TEXTURE_2D, 0)

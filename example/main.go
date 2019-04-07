@@ -77,10 +77,10 @@ func main() {
 	textObj.Position = mgl32.Vec3{200, 200, 0}
 	text := component.NewText()
 	textObj.AddComponent(text)
+	text.Text = "Zero"
 	text.Size = 1
 	text.Font = f
 	text.Color = bui.Color{1, 0, 0, 1}
-	canObj.AddChild(textObj)
 
 	// Create Object (Square)
 	sqObj := view.NewObject()
@@ -91,7 +91,6 @@ func main() {
 	rt.Height = 50
 	sqObj.AddComponent(rt)
 	sqObj.AddComponent(sq)
-	canObj.AddChild(sqObj)
 
 	// Create Object (Sprite, Button)
 	sp := component.NewSprite(tex)
@@ -102,10 +101,10 @@ func main() {
 	rt2 := component.NewRectTransform()
 	rt2.Width = 50
 	rt2.Height = 50
-	rt2.Anchos.Min.X = 0.1
-	rt2.Anchos.Max.X = 0.9
-	rt2.Anchos.Min.Y = 0.1
-	rt2.Anchos.Max.Y = 0.9
+	rt2.Anchos.Min.X = 0.0
+	rt2.Anchos.Max.X = 0.1
+	rt2.Anchos.Min.Y = 0.0
+	rt2.Anchos.Max.Y = 0.1
 	spObj.AddComponent(rt2)
 
 	btn := component.NewButton()
@@ -119,15 +118,14 @@ func main() {
 		x, y := w.GetCursorPos()
 		spObj.Position = mgl32.Vec3{float32(x) - rt2.Width/2, -float32(y) + rt2.Height/2, 0}
 	}
-	btn.OnPointerDwon = func() {
-		fmt.Println("Hey")
-	}
 	spObj.AddComponent(btn)
 	canObj.AddChild(spObj)
 
 	d := NewDragObject(w, spObj)
 	canObj.AddChild(d)
 
+	canObj.AddChild(sqObj)
+	canObj.AddChild(textObj)
 	scene.Add(canObj)
 
 	scene.Start()
