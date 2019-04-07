@@ -50,9 +50,15 @@ func main() {
 	view.InitShader()
 
 	// Create Object (Canvas)
-	can := component.NewCanvas(w)
 	canObj := view.NewObject()
+
+	can := component.NewCanvas(w)
 	canObj.AddComponent(can)
+
+	canRT := &component.RectTransform{}
+	canRT.Width = 800
+	canRT.Height = 600
+	canObj.AddComponent(canRT)
 
 	// Create Texture
 	tex, err := view.NewTexture("test_image_32px.png")
@@ -93,9 +99,13 @@ func main() {
 	spObj.Position = mgl32.Vec3{32, -32, 0}
 	spObj.AddComponent(sp)
 
-	rt2 := &component.RectTransform{}
+	rt2 := component.NewRectTransform()
 	rt2.Width = 50
 	rt2.Height = 50
+	rt2.Anchos.Min.X = 0.1
+	rt2.Anchos.Max.X = 0.9
+	rt2.Anchos.Min.Y = 0.1
+	rt2.Anchos.Max.Y = 0.9
 	spObj.AddComponent(rt2)
 
 	btn := component.NewButton()
