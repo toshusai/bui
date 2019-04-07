@@ -11,7 +11,7 @@ type Object struct {
 	Position   mgl32.Vec3
 	Rotation   mgl32.Mat4
 	Scale      mgl32.Vec3
-	components []component
+	Components []component
 	Parent     *Object
 	Children   []*Object
 }
@@ -26,7 +26,7 @@ func NewObject() *Object {
 
 func (obj *Object) AddComponent(comp component) {
 	comp.SetParent(obj)
-	obj.components = append(obj.components, comp)
+	obj.Components = append(obj.Components, comp)
 }
 
 func (obj *Object) AddChild(chld *Object) {
@@ -38,7 +38,7 @@ func (obj *Object) Init() {
 	for _, child := range obj.Children {
 		child.Init()
 	}
-	for _, comp := range obj.components {
+	for _, comp := range obj.Components {
 		comp.Init()
 	}
 }
@@ -47,13 +47,13 @@ func (obj *Object) Update() {
 	for _, child := range obj.Children {
 		child.Update()
 	}
-	for _, comp := range obj.components {
+	for _, comp := range obj.Components {
 		comp.Update()
 	}
 }
 
 func (obj *Object) GetComponent(value interface{}) component {
-	for _, comp := range obj.components {
+	for _, comp := range obj.Components {
 		if reflect.TypeOf(value) == reflect.TypeOf(comp) {
 			return comp
 		}

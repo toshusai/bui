@@ -6,8 +6,8 @@ import (
 
 // Scene !
 type Scene struct {
-	objects []*Object
-	Window  *Window
+	Root   *Object
+	Window *Window
 }
 
 var currentScene *Scene
@@ -23,18 +23,22 @@ func NewScene() *Scene {
 		panic(err)
 	}
 
-	scene := &Scene{}
+	root := NewObject()
+	root.Name = "root"
+	scene := &Scene{
+		Root: root,
+	}
 	currentScene = scene
 	return scene
 }
 
 // Add sprite to scene
 func (scene *Scene) Add(obj *Object) {
-	scene.objects = append(scene.objects, obj)
+	scene.Root.AddChild(obj)
 }
 
 func (scene *Scene) Start() {
-	for _, obj := range scene.objects {
+	for _, obj := range scene.Root.Children {
 		obj.Init()
 	}
 }
@@ -43,7 +47,7 @@ func (scene *Scene) Start() {
 func (scene *Scene) Draw() {
 	// gl.ClearColor(1.0, 1.0, 0, 1.0)
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-	for _, obj := range scene.objects {
+	for _, obj := range scene.Root.Children {
 		obj.Update()
 	}
 }

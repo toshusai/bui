@@ -70,7 +70,7 @@ func (rt *RectTransform) Update() {
 }
 
 func (rt *RectTransform) Init() {
-	if rt.parent.Parent != nil {
+	if rt.parent.Parent != nil && rt.parent.Parent.Name != "root" {
 		rt.ParentRectTransform = rt.parent.Parent.GetComponent(&RectTransform{}).(*RectTransform)
 	}
 }
