@@ -7,22 +7,20 @@ import (
 )
 
 type Canvas struct {
-	parent     *view.Object
-	projection mgl32.Mat4
-	view       mgl32.Mat4
+	parent        *view.Object
+	projection    mgl32.Mat4
+	view          mgl32.Mat4
+	rectTransform *RectTransform
 }
 
 func NewCanvas(w *view.Window) *Canvas {
-	return &Canvas{
-		projection: mgl32.Ortho(float32(-w.Width/2), float32(w.Width/2), -float32(w.Height/2), float32(w.Height/2), 0, 100),
-		view:       mgl32.LookAtV(mgl32.Vec3{0, 0, 50}, mgl32.Vec3{0, 0, 0}, mgl32.Vec3{0, 1, 0}),
-	}
+	return &Canvas{}
 }
 
 func (c *Canvas) Init() {
-	scene := view.GetScene()
-	hW := float32(scene.Window.Width / 2)
-	hH := float32(scene.Window.Height / 2)
+	c.rectTransform = c.parent.GetComponent(&RectTransform{}).(*RectTransform)
+	hW := float32(c.rectTransform.Width / 2)
+	hH := float32(c.rectTransform.Height / 2)
 	c.projection = mgl32.Ortho(-hW, hW, -hH, hH, 0, 100)
 	c.view = mgl32.LookAtV(mgl32.Vec3{hW, -hH, 50}, mgl32.Vec3{hW, -hH, 0}, mgl32.Vec3{0, 1, 0})
 }
