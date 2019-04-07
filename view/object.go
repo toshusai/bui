@@ -30,6 +30,7 @@ func (obj *Object) AddComponent(comp component) {
 
 func (obj *Object) AddChild(chld *Object) {
 	obj.Children = append(obj.Children, chld)
+	chld.Parent = obj
 }
 
 func (obj *Object) Init() {
