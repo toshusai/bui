@@ -51,11 +51,17 @@ func (t *Text) Update() {
 	gl.BindVertexArray(t.Font.Vao)
 
 	// Iterate through all characters in string
+	baseLine := t.parent.Position.Y()
 	for i := range indices {
 
 		//get rune
 		runeIndex := indices[i]
 
+		if int(runeIndex) == 10 {
+			baseLine += 30
+			x = t.parent.Position.X()
+			continue
+		}
 		//skip runes that are not in font chacter range
 		if int(runeIndex)-int(lowChar) > len(t.Font.FontChar) || runeIndex < lowChar {
 			fmt.Printf("%c %d\n", runeIndex, runeIndex)
@@ -67,7 +73,7 @@ func (t *Text) Update() {
 
 		//calculate position and size for current rune
 		xpos := x + float32(ch.BearingH)*t.Size
-		ypos := t.parent.Position.Y() - float32(ch.Height-ch.BearingV)*t.Size
+		ypos := baseLine - float32(ch.Height-ch.BearingV)*t.Size
 		w := float32(ch.Width) * t.Size
 		h := float32(ch.Height) * t.Size
 
