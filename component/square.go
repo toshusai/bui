@@ -51,7 +51,23 @@ func (sq *Square) Init() {
 func (sq *Square) Update() {
 	v := view.GetSimpleShader()
 	gl.UseProgram(v.GetProgram())
+	var translate mgl32.Mat4
+	var x, y float32
+	if sq.rectTransform.IsPivotX() {
+		x = sq.parent.Position.X()
+	} else {
+		x = sq.rectTransform.GetAnchorsMinX()
+		maxX := sq.rectTransform.GetAnchorsMaxX()
+		sq.rectTransform.Width = maxX - x
+	}
 
+	if sq.rectTransform.IsPivotY() {
+		y = sq.parent.Position.Y()
+	} else {
+		y = sq.rectTransform.GetAnchorsMinY()
+		maxY := sq.rectTransform.GetAnchorsMaxY()
+		sq.rectTransform.Height = maxY - y
+	}
 	sq.vertices[4] = -sq.rectTransform.Height
 	sq.vertices[6] = sq.rectTransform.Width
 	sq.vertices[10] = -sq.rectTransform.Height
@@ -62,9 +78,9 @@ func (sq *Square) Update() {
 	gl.BindBuffer(gl.ARRAY_BUFFER, sq.vbo)
 	gl.BufferSubData(gl.ARRAY_BUFFER, 0, len(sq.vertices)*4, gl.Ptr(sq.vertices))
 
-	translate := mgl32.Translate3D(
-		sq.parent.Position.X(),
-		sq.parent.Position.Y(),
+	translate = mgl32.Translate3D(
+		x,
+		-y,
 		sq.parent.Position.Z())
 
 	scale := mgl32.Scale3D(
