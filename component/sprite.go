@@ -60,20 +60,37 @@ func (sp *Sprite) Update() {
 	v := view.GetSpriteShader()
 	gl.UseProgram(v.GetProgram())
 
-	sp.vertices[6] = -sp.rectTransform.Height
-	sp.vertices[10] = sp.rectTransform.Width
-	sp.vertices[16] = -sp.rectTransform.Height
-	sp.vertices[20] = sp.rectTransform.Width
-	sp.vertices[21] = -sp.rectTransform.Height
-	sp.vertices[25] = sp.rectTransform.Width
+	var translate mgl32.Mat4
+	var x, y, w, h float32
+	if sp.rectTransform.IsPivotX() {
+		w = sp.rectTransform.Width
+		x = sp.parent.Position.X()
+	} else {
+		x = sp.rectTransform.GetAnchorsMinX()
+		maxX := sp.rectTransform.GetAnchorsMaxX()
+		w = maxX - x
+	}
 
+	if sp.rectTransform.IsPivotY() {
+		h = sp.rectTransform.Height
+		y = sp.parent.Position.Y()
+	} else {
+		y = sp.rectTransform.GetAnchorsMinY()
+		maxY := sp.rectTransform.GetAnchorsMaxY()
+		h = maxY - y
+	}
+	sp.vertices[6] = -h
+	sp.vertices[10] = w
+	sp.vertices[16] = -h
+	sp.vertices[20] = w
+	sp.vertices[21] = -h
+	sp.vertices[25] = w
 	gl.BindBuffer(gl.ARRAY_BUFFER, sp.vbo)
 	gl.BufferSubData(gl.ARRAY_BUFFER, 0, len(sp.vertices)*4, gl.Ptr(sp.vertices))
-	translate := mgl32.Translate3D(
-		sp.parent.Position.X(),
-		sp.parent.Position.Y(),
+	translate = mgl32.Translate3D(
+		x,
+		-y,
 		sp.parent.Position.Z())
-
 	scale := mgl32.Scale3D(
 		sp.parent.Scale.X(),
 		sp.parent.Scale.Y(),
@@ -88,10 +105,8 @@ func (sp *Sprite) Update() {
 	gl.ActiveTexture(gl.TEXTURE0)
 	gl.BindTexture(gl.TEXTURE_2D, sp.Texture.GetTexture())
 	gl.DrawArrays(gl.TRIANGLES, 0, 6)
-
 }
 
 func (sp *Sprite) Init() {
 	sp.rectTransform = sp.parent.GetComponent(&RectTransform{}).(*RectTransform)
-
 }
