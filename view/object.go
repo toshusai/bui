@@ -7,6 +7,7 @@ import (
 )
 
 type Object struct {
+	Name       string
 	Position   mgl32.Vec3
 	Rotation   mgl32.Mat4
 	Scale      mgl32.Vec3
