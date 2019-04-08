@@ -1,6 +1,7 @@
 package view
 
 import (
+	"fmt"
 	"log"
 	"runtime"
 
@@ -93,4 +94,12 @@ func (w *Window) GetMouseUp() bool {
 
 func (w *Window) GetCursorPos() (float64, float64) {
 	return w.window.GetCursorPos()
+}
+
+func (w *Window) SetChar() {
+	var c glfw.CharModsCallback
+	c = func(w *glfw.Window, char rune, mod glfw.ModifierKey) {
+		fmt.Println(string(char))
+	}
+	w.window.SetCharModsCallback(c)
 }

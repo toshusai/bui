@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"reflect"
 
 	"github.com/go-gl/mathgl/mgl32"
@@ -70,8 +71,31 @@ func main() {
 
 	canObj.AddChild(textObj)
 
+	// Create Object (Button Square RT)
+	i := view.NewObject()
+	i.Position = mgl32.Vec3{100, 100, 0}
+
+	rt := component.NewRectTransform()
+	rt.Width = 100
+	rt.Height = 100
+	i.AddComponent(rt)
+
+	sq := component.NewSquare()
+	i.AddComponent(sq)
+
+	btn := component.NewButton()
+	btn.OnPointerDwon = func() {
+		fmt.Println("clicked")
+		window.SetChar()
+	}
+
+	i.AddComponent(btn)
+
+	canObj.AddChild(i)
+
 	scene.Add(canObj)
 	text.Text = "\n" + s(scene.Root)
+
 	Start()
 }
 
